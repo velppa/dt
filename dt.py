@@ -29,25 +29,39 @@ def usage():
   sys.exit()
 
 
-def str_to_timedelta(s):
-  logging.debug("Converting %s to timedelta" % s)
-  m = datestr.search(s).groupdict()
-  td = timedelta(**{k:int(v) for k, v in m.items()})
-  return td
+class Timedelta(object):
+  """
+    Dummy class incapsulate timedelta properties.
+  """
+  def __init__(self, days=0, hours=0, minutes=0, seconds=0):
+    self.t = timedelta(days=days, hours=hours, minutes=minutes, seconds=seconds)
+    self.days = self.t.days
+    self.seconds = self.t.seconds
+
+  def __repr__(self):
+    return repr(self.t)
+
+  def __str__(self):
+    s = self.t.seconds
+    return "{}d {:02}:{:02}".format(self.days, s//3600, (s//60)%60)
+
+  def __add__(self, other):
+    t = self.t + other.t
+    return Timedelta(days=t.days, seconds=t.seconds)
 
 
-def timedelta_to_str(td):
-  s = td.seconds
-  return "{}d {:02}:{:02}".format(td.days, s//3600, (s//60)%60)
+class DT(Timedelta):
+  """
+    Timedelta class with constructor from string
+  """
+  def __init__(self, string):
+    m = datestr.search(string).groupdict()
+    super(DT, self).__init__(**{k:int(v) for k, v in m.items()})
 
 
 def calc(expr):
   try:
-    datetimes = [str_to_timedelta(x) for x in expr.strip().split(' ')]
-    logging.debug(map(str, datetimes))
-    result = sum(datetimes, timedelta())
-    logging.debug("Result = %s" % str(result))
-    return timedelta_to_str(result)
+    return str(reduce(operator.add, [DT(x) for x in expr.strip().split(' ')]))
   except:
     logging.error('Failed to process expression "%s"' % expr)
     if LOGLEVEL > logging.DEBUG:
@@ -66,6 +80,7 @@ def main():
   expr = expr.replace('+',' +')
   logging.debug('Processed expression: %s' % expr)
   print(calc(expr))
+
 
 if __name__ == "__main__":
   main()
