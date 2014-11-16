@@ -17,14 +17,16 @@ datestr = re.compile(r'^((?P<days>[+-]?\d+)d)?(?P<hours>\d+):(?P<minutes>\d+)$')
 
 def usage():
   print("""
-    Timedelta arithmetics.
+    Timedelta arithmetics. Only days, hours and minutes are supported. Negative
+    values are normalized that time part is always positive.
+
     Usage:
       $python dt.py <expr>
-
     <expr>: expression with datetimes.
+
     Examples:
-      1d 23:14 + 2d 12:11
-      -1d 23:14 - 2d 00:11
+      1d 23:14 + 2d 12:11 = 4d 11:25
+      1d 12:00 - 2d 00:00 = -1d 12:00 (minus 1 day plus 12 hours)
   """)
   sys.exit()
 

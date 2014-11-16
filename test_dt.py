@@ -18,6 +18,8 @@ def test_calc():
   assert calc("3d00:00 -2d00:00") == "1d 00:00"
   assert calc("3d10:00 -2d00:00") == "1d 10:00"
   assert calc("3d12:00 -2d12:00") == "2d 00:00"
+  assert calc("1d23:14 +2d12:11") == "4d 11:25"
   assert calc("1d12:00 -5d00:00") == "-4d 12:00"
   assert calc("-5d12:00 +1d00:00") == "-4d 12:00"
+  assert calc("1d12:00 -2d00:00") == "-1d 12:00"
 
